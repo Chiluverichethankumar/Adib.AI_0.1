@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🤖Adib.AI</title>
+  <link rel="icon" type="image/png" href="AdibAi.png" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #121212;
+      color: #64FFDA;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .logo {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-top: 20px;
+      color: #00ffe7;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #00ffe7; }
+      to { text-shadow: 0 0 20px #00ffe7, 0 0 30px #00ffe7; }
+    }
+
+    .logo-mini {
+      font-size: 1rem;
+      color: #64FFDA;
+      animation: miniGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes miniGlow {
+      from { text-shadow: 0 0 4px #64FFDA; }
+      to { text-shadow: 0 0 8px #64FFDA, 0 0 12px #64FFDA; }
+    }
+
+    .hero {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: #1a1a1a;
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+    }
+
+    .hero p {
+      color: #A8B2D1;
+      max-width: 600px;
+      margin: 0.5rem auto;
+      font-size: 1rem;
+    }
+
+    .chat-window {
+      flex: 1;
+      width: 90%;
+      max-width: 600px;
+      margin: 1rem auto;
+      background: #1e1e1e;
+      border-radius: 10px;
+      padding: 1rem;
+      height: 400px;
+      overflow-y: auto;
+    }
+
+    .message {
+      padding: 0.75rem;
+      margin: 0.5rem;
+      border-radius: 10px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+
+    .user {
+      background: #2e2e2e;
+      margin-left: auto;
+      color: #fff;
+    }
+
+    .bot {
+      background: #b9f0e4;
+      color: #121212;
+      margin-right: auto;
+    }
+
+    .input-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 1rem auto;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    input {
+      flex: 1;
+      padding: 0.75rem;
+      border-radius: 10px 0 0 10px;
+      border: none;
+      background: #1a1a1a;
+      color: white;
+    }
+
+    button {
+      padding: 0.75rem 1rem;
+      background: #afedde;
+      border: none;
+      border-radius: 0 10px 10px 0;
+      cursor: pointer;
+      color: #121212;
+      min-width: 80px;
+    }
+
+    form input, form textarea {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+    }
+
+    .feedback-section {
+      width: 90%;
+      max-width: 600px;
+      margin: 2rem auto;
+      background: #1e1e1e;
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    .footer {
+      background-color: #1a1a1a;
+      text-align: center;
+      padding: 1.5rem 0;
+      color: #A8B2D1;
+      margin-top: auto;
+      border-top: 1px solid #333;
+    }
+
+    .footer img {
+      width: 26px;
+      height: 26px;
+    }
+
+    .footer a {
+      margin: 0 10px;
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+      .chat-window {
+        height: 350px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="logo"><h1>🤖 Adib.AI</h1></div>
+    <p>Basic Version</p>
+    <p>Ask me any basic theory questions about Python, SQL, Data Science, math, jokes, and more!</p>
+  </div>
+
+  <div class="chat-window" id="chatBox">
+    <div class="message bot">👋 Hello! I'm 🤖Adib.AI. Ask me anything!</div>
+  </div>
+
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Type your message..." onkeydown="handleKey(event)" />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <div class="feedback-section">
+    <h2 style="color: #A8B2D1;">💌 Help improve <span style="color: #64FFDA;">🤖Adib.AI</span></h2>
+    <form id="feedbackForm" onsubmit="sendMail(event)">
+      <input type="text" id="name" placeholder="Your Name" required />
+      <input type="number" id="age" placeholder="Your Age" required />
+      <textarea id="suggestion" placeholder="What can we improve in Adib AI?" required></textarea>
+      <button type="submit" style="background: #64FFDA; border: none; padding: 0.75rem; border-radius: 10px; color: #121212; width: 100%;">Send</button>
+    </form>
+    <p id="feedbackMsg" style="color: #A8B2D1; margin-top: 1rem;"></p>
+  </div>
+
+  <div class="footer">
+    <div style="display: flex; justify-content: center; gap: 20px; align-items: center;">
+      <a href="https://www.linkedin.com/in/chiluverichethankumar/" target="_blank" title="LinkedIn">
+        <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" />
+      </a>
+      <a href="https://github.com/Chiluverichethankumar" target="_blank" title="GitHub">
+        <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" />
+      </a>
+      <a href="https://chiluveri.netlify.app/" target="_blank" title="Portfolio">
+        <img src="https://cdn-icons-png.flaticon.com/512/841/841364.png" alt="Portfolio" />
+      </a>
+    </div>
+    <p style="font-size: 0.75rem; margin: 0.5rem 0;">
+      <span class="logo-mini">🤖 Adib.AI</span> – Copyright © All rights reserved @<strong>Chiluveri</strong>
+    </p>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById('userInput');
+      const message = input.value.trim();
+      if (!message) return;
+
+      const chatBox = document.getElementById('chatBox');
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user';
+      userMsg.textContent = message;
+      chatBox.appendChild(userMsg);
+      input.value = "";
+
+      const typing = document.createElement('div');
+      typing.className = 'message bot';
+      typing.textContent = 'Typing...';
+      chatBox.appendChild(typing);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      try {
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message })
+        });
+        const data = await res.json();
+        chatBox.removeChild(typing);
+
+        const botMsg = document.createElement('div');
+        botMsg.className = 'message bot';
+        botMsg.textContent = data.response;
+        chatBox.appendChild(botMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      } catch (error) {
+        chatBox.removeChild(typing);
+        const errorMsg = document.createElement('div');
+        errorMsg.className = 'message bot';
+        errorMsg.textContent = 'Oops! Something went wrong.';
+        chatBox.appendChild(errorMsg);
+      }
+    }
+
+    function handleKey(e) {
+      if (e.key === "Enter") sendMessage();
+    }
+
+    async function sendMail(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const age = document.getElementById('age').value;
+      const suggestion = document.getElementById('suggestion').value;
+
+      const res = await fetch('/send_feedback_mail', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, age, suggestion })
+      });
+
+      const data = await res.json();
+      document.getElementById('feedbackMsg').textContent = data.message;
+      document.getElementById('feedbackForm').reset();
+    }
+  </script>
+</body>
+</html>
