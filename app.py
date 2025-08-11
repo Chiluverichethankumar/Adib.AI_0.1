@@ -4,9 +4,10 @@ from flask import Flask, request, jsonify, render_template
 from dotenv import load_dotenv
 from feedback import send_feedback
 from pathlib import Path
-load_dotenv(dotenv_path=Path('D:/Stady/Projects/Adib.AI_0.1-main/.env'))
 
-load_dotenv()
+# Load environment variables explicitly from your .env file once
+load_dotenv(dotenv_path=Path('.env'))
+
 app = Flask(__name__)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -17,11 +18,10 @@ def home():
     return render_template("index.html")
 
 # Chat endpoint
-# Chat endpoint
 @app.route("/chat", methods=["POST"])
 def chat():
     user_input = request.json.get("message")
-    
+
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {OPENAI_API_KEY}"
@@ -50,8 +50,7 @@ def chat():
 # Feedback endpoint
 @app.route("/feedback", methods=["POST"])
 def feedback():
-    
-    print(f"DEBUG: YOUR_EMAIL loaded as: {os.getenv('FEEDBACK_EMAIL')}")
+    print(f"DEBUG: FEEDBACK_EMAIL loaded as: {os.getenv('FEEDBACK_EMAIL')}")
     print(f"DEBUG: YOUR_PASSWORD loaded as: {os.getenv('YOUR_PASSWORD')}")
 
     data = request.json
@@ -67,11 +66,14 @@ def feedback():
     else:
         return jsonify({"success": False, "error": "Failed to send feedback"}), 500
 
+
 if __name__ == "__main__":
     # Create the 'static' and 'templates' folders if they don't exist
     if not os.path.exists('static'):
         os.makedirs('static')
     if not os.path.exists('templates'):
         os.makedirs('templates')
-    
-    app.run(debug=True)
+
+    # For deployment platforms like Railway, use PORT env var, else default 5000
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
