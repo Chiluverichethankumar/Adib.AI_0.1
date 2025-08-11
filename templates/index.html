@@ -4,9 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Adib.AI</title>
-  <link rel="icon" type="image/png" href="AdibAi.jpg" />
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='adibai.png') }}" />
 
-  <!-- Code highlighting -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
@@ -268,6 +267,57 @@
       }
     }
 
+    /* Feedback Section */
+    .feedback-section {
+      background: #071126;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      color: #e6eef8;
+    }
+    .feedback-section h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+    .feedback-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .feedback-form input,
+    .feedback-form textarea {
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid #1e293b;
+      background: #0b1220;
+      color: #e6eef8;
+      font-size: 0.95rem;
+    }
+    .feedback-form input::placeholder,
+    .feedback-form textarea::placeholder {
+      color: #9fb4d4;
+    }
+    .feedback-form textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .feedback-form button {
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg, #06b6d4, #3b82f6);
+      color: #042f2e;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .feedback-form button:hover {
+      background: linear-gradient(90deg, #0899b2, #2b6cbf);
+    }
+
     /* Responsive design */
     @media (max-width: 1024px) {
       .container {
@@ -330,7 +380,7 @@
   <div id="app" class="container">
     <aside class="sidebar">
       <div class="brand">
-        <img src="{{ url_for('static', filename='adinai.png') }}" alt="AdibAI Logo" class="logo">
+        <img src="{{ url_for('static', filename='adibai.png') }}" alt="AdibAI Logo" class="logo">
         <div>
           <h1>AdibAI</h1>
           <div style="font-size: 0.75rem; color: #9fb4d4">Your friendly AI assistant</div>
@@ -351,7 +401,7 @@
     <main class="chat-area">
       <div class="topbar">
         <div class="title">
-           <img src="{{ url_for('static', filename='adinai.png') }}" alt="AdibAI Logo" class="logo">
+           <img src="{{ url_for('static', filename='adibai.png') }}" alt="AdibAI Logo" class="logo">
           AdibAI Chat
         </div>
       </div>
@@ -364,6 +414,17 @@
       </div>
     </main>
   </div>
+  
+  <section class="feedback-section">
+    <h2>Give us your Feedback</h2>
+    <form id="feedback-form" class="feedback-form">
+      <input type="text" id="feedback-name" name="name" placeholder="Your Name" required>
+      <input type="email" id="feedback-email" name="email" placeholder="Your Email" required>
+      <textarea id="feedback-message" name="message" placeholder="Your Message" required></textarea>
+      <button type="submit">Send Feedback</button>
+    </form>
+    <div id="feedback-status" style="margin-top: 1rem; text-align: center;"></div>
+  </section>
 
   <script>
     const messagesEl = document.getElementById('messages');
@@ -457,6 +518,35 @@
         addMessage('Network error: ' + err.message, 'bot');
       }
     }
+
+    // New JavaScript for the feedback form
+    document.getElementById('feedback-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusEl = document.getElementById('feedback-status');
+      statusEl.textContent = 'Sending...';
+
+      const name = document.getElementById('feedback-name').value;
+      const email = document.getElementById('feedback-email').value;
+      const message = document.getElementById('feedback-message').value;
+
+      try {
+        const res = await fetch('/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, message })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          statusEl.textContent = 'Feedback sent successfully! Thank you.';
+          document.getElementById('feedback-form').reset();
+        } else {
+          statusEl.textContent = 'Error: ' + data.error;
+        }
+      } catch (err) {
+        statusEl.textContent = 'Network error: ' + err.message;
+      }
+    });
   </script>
 </body>
 </html>
