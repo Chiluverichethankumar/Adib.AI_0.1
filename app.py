@@ -5,22 +5,24 @@ from dotenv import load_dotenv
 from feedback import send_feedback
 from pathlib import Path
 
-# Load environment variables explicitly from your .env file once
+# Load environment variables from .env file
 load_dotenv(dotenv_path=Path('.env'))
 
 app = Flask(__name__)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-# Serve the HTML
+# Serve the HTML template for home page
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return render_template("index.html")  # Make sure templates/index.html exists
 
 # Chat endpoint
 @app.route("/chat", methods=["POST"])
 def chat():
     user_input = request.json.get("message")
+    if not user_input:
+        return jsonify({"error": "No message provided"}), 400
 
     headers = {
         "Content-Type": "application/json",
@@ -68,12 +70,11 @@ def feedback():
 
 
 if __name__ == "__main__":
-    # Create the 'static' and 'templates' folders if they don't exist
-    if not os.path.exists('static'):
-        os.makedirs('static')
-    if not os.path.exists('templates'):
-        os.makedirs('templates')
+    # Create folders if not exist (optional)
+    os.makedirs('static', exist_ok=True)
+    os.makedirs('templates', exist_ok=True)
 
-    # For deployment platforms like Railway, use PORT env var, else default 5000
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    # Use debug=True only locally, disable on Railway or prod by env var
+    debug_mode = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)
