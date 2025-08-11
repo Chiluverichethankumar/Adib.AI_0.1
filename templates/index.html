@@ -1,281 +1,461 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🤖Adib.AI</title>
-  <link rel="icon" type="image/png" href="AdibAi.png" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Adib.AI</title>
+  <link rel="icon" type="image/png" href="AdibAi.jpg" />
+
+  <!-- Code highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
   <style>
+    /* Reset */
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html, body, #app {
+      height: 100%;
+      width: 100%;
     }
 
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: #121212;
-      color: #64FFDA;
-      margin: 0;
-      padding: 0;
+      background: #0f1724;
+      color: #e6eef8;
+      overflow-x: hidden;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Layout */
+    .container {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 1.5rem;
+      height: 100vh;
+      padding: 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: #071126;
+      border-radius: 12px;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      gap: 0.75rem;
     }
-
-    .logo {
-      font-size: 2.5rem;
-      text-align: center;
-      margin-top: 20px;
-      color: #00ffe7;
-      animation: glow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes glow {
-      from { text-shadow: 0 0 10px #00ffe7; }
-      to { text-shadow: 0 0 20px #00ffe7, 0 0 30px #00ffe7; }
-    }
-
-    .logo-mini {
-      font-size: 1rem;
-      color: #64FFDA;
-      animation: miniGlow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes miniGlow {
-      from { text-shadow: 0 0 4px #64FFDA; }
-      to { text-shadow: 0 0 8px #64FFDA, 0 0 12px #64FFDA; }
-    }
-
-    .hero {
-      text-align: center;
-      padding: 2rem 1rem;
-      background: #1a1a1a;
-    }
-
-    .hero h1 {
-      font-size: 2rem;
-    }
-
-    .hero p {
-      color: #A8B2D1;
-      max-width: 600px;
-      margin: 0.5rem auto;
-      font-size: 1rem;
-    }
-
-    .chat-window {
-      flex: 1;
-      width: 90%;
-      max-width: 600px;
-      margin: 1rem auto;
-      background: #1e1e1e;
-      border-radius: 10px;
-      padding: 1rem;
-      height: 400px;
-      overflow-y: auto;
-    }
-
-    .message {
-      padding: 0.75rem;
-      margin: 0.5rem;
-      border-radius: 10px;
-      max-width: 80%;
-      word-wrap: break-word;
-    }
-
-    .user {
-      background: #2e2e2e;
-      margin-left: auto;
-      color: #fff;
-    }
-
-    .bot {
-      background: #b9f0e4;
-      color: #121212;
-      margin-right: auto;
-    }
-
-    .input-area {
+    .brand {
       display: flex;
-      justify-content: center;
       align-items: center;
-      flex-wrap: wrap;
-      margin: 1rem auto;
-      width: 90%;
-      max-width: 600px;
+      gap: 0.75rem;
+    }
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .brand h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .new-chat {
+      margin-top: 0.5rem;
+      padding: 0.75rem;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #0b1220, #0d1b2b);
+      cursor: pointer;
+      border: 1px solid #15303f;
+      text-align: center;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    .new-chat:hover {
+      background: linear-gradient(90deg, #0d1b2b, #1e293b);
+    }
+    .nav {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .nav button {
+      background: transparent;
+      color: #d7e8ff;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    .nav button:hover {
+      background: #092432;
+    }
+    .footer {
+      margin-top: auto;
+      font-size: 0.75rem;
+      color: #9fb4d4;
+      text-align: center;
     }
 
-    input {
+    /* Chat area */
+    .chat-area {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: linear-gradient(90deg, #071727, #08182a);
+      border-radius: 12px;
+    }
+    .topbar .title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .topbar .title img {
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      background: linear-gradient(180deg, #07192a, #071427);
+      border-radius: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: #3b82f6 #07192a;
+    }
+    .messages::-webkit-scrollbar {
+      width: 6px;
+    }
+    .messages::-webkit-scrollbar-track {
+      background: #07192a;
+    }
+    .messages::-webkit-scrollbar-thumb {
+      background: #3b82f6;
+      border-radius: 3px;
+    }
+    .msg {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .msg.user {
+      justify-content: flex-end;
+    }
+    .bubble {
+      max-width: 75%;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      background: #08293a;
+      color: #e6eef8;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.95rem;
+    }
+    .bubble.user {
+      background: linear-gradient(90deg, #1e293b, #0b1220);
+      border: 1px solid #1e293b;
+    }
+
+    /* Code block styling */
+    .code-block {
+      position: relative;
+      background: #1e293b;
+      border-radius: 8px;
+      padding-top: 2rem;
+      margin-top: 0.5rem;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.75rem;
+      border: none;
+      border-radius: 4px;
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .copy-btn:hover {
+      background: #2563eb;
+    }
+
+    /* Composer */
+    .composer {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: linear-gradient(90deg, #071728, #041021);
+      border-radius: 12px;
+    }
+    .composer input {
       flex: 1;
       padding: 0.75rem;
-      border-radius: 10px 0 0 10px;
-      border: none;
-      background: #1a1a1a;
-      color: white;
-    }
-
-    button {
-      padding: 0.75rem 1rem;
-      background: #afedde;
-      border: none;
-      border-radius: 0 10px 10px 0;
-      cursor: pointer;
-      color: #121212;
-      min-width: 80px;
-    }
-
-    form input, form textarea {
-      width: 100%;
-      padding: 0.75rem;
-      margin: 0.5rem 0;
-      background: #1a1a1a;
-      border: 1px solid #333;
-      border-radius: 8px;
-      color: #fff;
-    }
-
-    .feedback-section {
-      width: 90%;
-      max-width: 600px;
-      margin: 2rem auto;
-      background: #1e1e1e;
       border-radius: 10px;
-      padding: 1rem;
+      border: 1px solid #1e293b;
+      background: transparent;
+      color: #e6eef8;
+      font-size: 0.95rem;
+    }
+    .composer input::placeholder {
+      color: #9fb4d4;
+    }
+    .composer button {
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg, #06b6d4, #3b82f6);
+      color: #042f2e;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .composer button:hover {
+      background: linear-gradient(90deg, #0899b2, #2b6cbf);
     }
 
-    .footer {
-      background-color: #1a1a1a;
-      text-align: center;
-      padding: 1.5rem 0;
-      color: #A8B2D1;
-      margin-top: auto;
-      border-top: 1px solid #333;
+    /* Loader */
+    .typing {
+      width: 40px;
+      height: 10px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
     }
-
-    .footer img {
-      width: 26px;
-      height: 26px;
+    .typing span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #9bdaf7;
+      border-radius: 50%;
+      opacity: 0.25;
+      animation: blink 1s infinite;
     }
-
-    .footer a {
-      margin: 0 10px;
+    .typing span:nth-child(2) {
+      animation-delay: 0.2s;
     }
-
-    @media (max-width: 600px) {
-      .hero h1 {
-        font-size: 1.8rem;
+    .typing span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    @keyframes blink {
+      50% {
+        opacity: 1;
       }
-      .chat-window {
-        height: 350px;
+    }
+
+    /* Responsive design */
+    @media (max-width: 1024px) {
+      .container {
+        grid-template-columns: 200px 1fr;
+        padding: 1rem;
+      }
+      .sidebar {
+        width: 200px;
+      }
+      .bubble {
+        max-width: 80%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+        padding: 0.5rem;
+      }
+      .sidebar {
+        display: none;
+      }
+      .topbar .title img {
+        width: 24px;
+        height: 24px;
+      }
+      .bubble {
+        max-width: 85%;
+      }
+      .composer {
+        flex-direction: column;
+      }
+      .composer input,
+      .composer button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar {
+        padding: 0.5rem;
+      }
+      .topbar .title {
+        font-size: 1rem;
+      }
+      .messages {
+        padding: 0.5rem;
+      }
+      .bubble {
+        max-width: 90%;
+        font-size: 0.9rem;
+      }
+      .composer {
+        padding: 0.5rem;
       }
     }
   </style>
 </head>
 <body>
-  <div class="hero">
-    <div class="logo"><h1>🤖 Adib.AI</h1></div>
-    <p>Basic Version</p>
-    <p>Ask me any basic theory questions about Python, SQL, Data Science, math, jokes, and more!</p>
-  </div>
+  <div id="app" class="container">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="{{ url_for('static', filename='adinai.png') }}" alt="AdibAI Logo" class="logo">
+        <div>
+          <h1>AdibAI</h1>
+          <div style="font-size: 0.75rem; color: #9fb4d4">Your friendly AI assistant</div>
+        </div>
+      </div>
 
-  <div class="chat-window" id="chatBox">
-    <div class="message bot">👋 Hello! I'm 🤖Adib.AI. Ask me anything!</div>
-  </div>
+      <div class="new-chat" onclick="clearChat()">+ New chat</div>
 
-  <div class="input-area">
-    <input type="text" id="userInput" placeholder="Type your message..." onkeydown="handleKey(event)" />
-    <button onclick="sendMessage()">Send</button>
-  </div>
+      <nav class="nav">
+        <button onclick="prefill('Write a haiku about AI')">Haiku example</button>
+        <button onclick="prefill('Give me a summary of the book Atomic Habits')">Summarize book</button>
+        <button onclick="prefill('Help me write a professional email for a job follow-up')">Email template</button>
+      </nav>
 
-  <div class="feedback-section">
-    <h2 style="color: #A8B2D1;">💌 Help improve <span style="color: #64FFDA;">🤖Adib.AI</span></h2>
-    <form id="feedbackForm" onsubmit="sendMail(event)">
-      <input type="text" id="name" placeholder="Your Name" required />
-      <input type="number" id="age" placeholder="Your Age" required />
-      <textarea id="suggestion" placeholder="What can we improve in Adib AI?" required></textarea>
-      <button type="submit" style="background: #64FFDA; border: none; padding: 0.75rem; border-radius: 10px; color: #121212; width: 100%;">Send</button>
-    </form>
-    <p id="feedbackMsg" style="color: #A8B2D1; margin-top: 1rem;"></p>
-  </div>
+      <div class="footer">AdibAI • Local dev</div>
+    </aside>
 
-  <div class="footer">
-    <div style="display: flex; justify-content: center; gap: 20px; align-items: center;">
-      <a href="https://www.linkedin.com/in/chiluverichethankumar/" target="_blank" title="LinkedIn">
-        <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" />
-      </a>
-      <a href="https://github.com/Chiluverichethankumar" target="_blank" title="GitHub">
-        <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" />
-      </a>
-      <a href="https://chiluveri.netlify.app/" target="_blank" title="Portfolio">
-        <img src="https://cdn-icons-png.flaticon.com/512/841/841364.png" alt="Portfolio" />
-      </a>
-    </div>
-    <p style="font-size: 0.75rem; margin: 0.5rem 0;">
-      <span class="logo-mini">🤖 Adib.AI</span> – Copyright © All rights reserved @<strong>Chiluveri</strong>
-    </p>
+    <main class="chat-area">
+      <div class="topbar">
+        <div class="title">
+           <img src="{{ url_for('static', filename='adinai.png') }}" alt="AdibAI Logo" class="logo">
+          AdibAI Chat
+        </div>
+      </div>
+
+      <div id="messages" class="messages"></div>
+
+      <div class="composer">
+        <input id="message" type="text" placeholder="Type a message... (Shift+Enter for newline)" onkeydown="handleKey(event)">
+        <button id="sendBtn" onclick="sendMessage()">Send</button>
+      </div>
+    </main>
   </div>
 
   <script>
-    async function sendMessage() {
-      const input = document.getElementById('userInput');
-      const message = input.value.trim();
-      if (!message) return;
+    const messagesEl = document.getElementById('messages');
+    const inputEl = document.getElementById('message');
 
-      const chatBox = document.getElementById('chatBox');
-      const userMsg = document.createElement('div');
-      userMsg.className = 'message user';
-      userMsg.textContent = message;
-      chatBox.appendChild(userMsg);
-      input.value = "";
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+    }
+
+    function copyCode(btn) {
+      const codeEl = btn.parentElement.querySelector('pre code');
+      navigator.clipboard.writeText(codeEl.innerText).then(() => {
+        btn.textContent = "Copied!";
+        setTimeout(() => btn.textContent = "Copy", 1500);
+      });
+    }
+
+    function addMessage(text, who = 'bot') {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'msg ' + (who === 'user' ? 'user' : 'bot');
+
+      // Detect ``` code blocks
+      const codeRegex = /```(\w+)?\n([\s\S]*?)```/g;
+      let formatted = text.replace(codeRegex, (match, lang, code) => {
+        const language = lang || '';
+        return `
+<div class="code-block">
+  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+  <pre><code class="${language}">${escapeHtml(code)}</code></pre>
+</div>`;
+      });
+
+      // Replace newlines with <br> for non-code
+      formatted = formatted.replace(/^(?!.*<pre>)(.+)$/gm, '$1<br>');
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble ' + (who === 'user' ? 'user' : 'bot');
+      bubble.innerHTML = formatted;
+
+      wrapper.appendChild(bubble);
+      messagesEl.appendChild(wrapper);
+
+      hljs.highlightAll();
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function prefill(text) {
+      inputEl.value = text;
+      inputEl.focus();
+    }
+
+    function clearChat() {
+      messagesEl.innerHTML = '';
+    }
+
+    function handleKey(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    async function sendMessage() {
+      const text = inputEl.value.trim();
+      if (!text) return;
+      addMessage(text, 'user');
+      inputEl.value = '';
 
       const typing = document.createElement('div');
-      typing.className = 'message bot';
-      typing.textContent = 'Typing...';
-      chatBox.appendChild(typing);
-      chatBox.scrollTop = chatBox.scrollHeight;
+      typing.className = 'msg';
+      typing.innerHTML = '<div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+      messagesEl.appendChild(typing);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
 
       try {
         const res = await fetch('/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message })
+          body: JSON.stringify({ message: text })
         });
+
         const data = await res.json();
-        chatBox.removeChild(typing);
+        typing.remove();
 
-        const botMsg = document.createElement('div');
-        botMsg.className = 'message bot';
-        botMsg.textContent = data.response;
-        chatBox.appendChild(botMsg);
-        chatBox.scrollTop = chatBox.scrollHeight;
-      } catch (error) {
-        chatBox.removeChild(typing);
-        const errorMsg = document.createElement('div');
-        errorMsg.className = 'message bot';
-        errorMsg.textContent = 'Oops! Something went wrong.';
-        chatBox.appendChild(errorMsg);
+        if (data.reply) addMessage(data.reply, 'bot');
+        else addMessage('Error: ' + (data.error || 'Unknown error'), 'bot');
+      } catch (err) {
+        typing.remove();
+        addMessage('Network error: ' + err.message, 'bot');
       }
-    }
-
-    function handleKey(e) {
-      if (e.key === "Enter") sendMessage();
-    }
-
-    async function sendMail(e) {
-      e.preventDefault();
-      const name = document.getElementById('name').value;
-      const age = document.getElementById('age').value;
-      const suggestion = document.getElementById('suggestion').value;
-
-      const res = await fetch('/send_feedback_mail', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, age, suggestion })
-      });
-
-      const data = await res.json();
-      document.getElementById('feedbackMsg').textContent = data.message;
-      document.getElementById('feedbackForm').reset();
     }
   </script>
 </body>
