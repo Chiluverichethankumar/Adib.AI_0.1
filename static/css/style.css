@@ -1,0 +1,51 @@
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body { height:100%; font-family:'Inter',sans-serif; background:#0a0e1a; color:#e6edf3; overflow:hidden; }
+
+.page { display:flex; flex-direction:column; height:100vh; padding:2rem 1.5rem 80px; } /* space for input */
+
+.header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+.logo { display:flex; align-items:center; gap:16px; font-size:2rem; font-weight:700; }
+.logo img { width:56px; height:56px; border-radius:16px; }
+.new-chat, .feedback-btn { padding:10px 20px; margin-left:10px; background:#21262d; border:1px solid #30363d; border-radius:16px; color:#f0f6fc; font-weight:600; cursor:pointer; }
+
+.messages { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:1.5rem; padding-bottom:1rem; }
+
+.message { display:flex; gap:18px; max-width:85%; align-self:flex-start; }
+.message.user { align-self:flex-end; flex-direction:row-reverse; }
+.avatar { width:48px; height:48px; border-radius:16px; background:#8b5cf6; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0; }
+.message.user .avatar { background:#2383e2; }
+.content { padding:16px 20px; border-radius:20px; background:#161b22; border:1px solid #30363d; line-height:1.6; }
+.message.user .content { background:#2383e2; color:white; }
+
+.input-container { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); width:90%; max-width:800px; z-index:100; }
+.input-box { display:flex; background:#161b22; border:1px solid #30363d; border-radius:28px; padding:16px 20px; box-shadow:0 12px 40px rgba(0,0,0,0.7); }
+#user-input { flex:1; background:none; border:none; outline:none; color:white; font-size:1.15rem; }
+.input-box button { width:80px; height:46px; background:#8b5cf6; border:none; border-radius:50px; color:white; font-size:20px; cursor:pointer; }
+
+/* Feedback Modal */
+.feedback-modal {
+  display:none;
+  position:fixed;
+  top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.7);
+  justify-content:center; align-items:center;
+  z-index:200;
+}
+
+.feedback-card {
+  background:#161b22; border:1px solid #30363d; border-radius:24px; padding:24px; width:90%; max-width:500px;
+  display:flex; flex-direction:column; gap:12px;
+}
+
+.feedback-card h3 { text-align:center; margin-bottom:12px; color:#c9d1d9; }
+.feedback-card input, .feedback-card textarea { width:100%; padding:12px; background:#0d1117; border:1px solid #30363d; border-radius:12px; color:white; }
+.feedback-card button { width:100%; padding:14px; background:#8b5cf6; border:none; border-radius:16px; color:white; font-weight:600; cursor:pointer; }
+.feedback-card .close-btn { background:#f56565; margin-top:5px; }
+#fb-status { text-align:center; margin-top:10px; color:#7ee787; }
+
+/* Mobile adjustments */
+@media (max-width:768px) {
+  .page { padding:1.5rem 1rem 60px; }
+  .input-container { bottom:24px; }
+}

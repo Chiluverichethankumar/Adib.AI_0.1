@@ -1,552 +1,62 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Adib.AI</title>
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='adibai.png') }}" />
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-
-  <style>
-    /* Reset */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    }
-    html, body, #app {
-      height: 100%;
-      width: 100%;
-    }
-
-    body {
-      background: #0f1724;
-      color: #e6eef8;
-      overflow-x: hidden;
-    }
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    /* Layout */
-    .container {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 1.5rem;
-      height: 100vh;
-      padding: 1.5rem;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      background: #071126;
-      border-radius: 12px;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      object-fit: cover;
-    }
-    .brand h1 {
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-    .new-chat {
-      margin-top: 0.5rem;
-      padding: 0.75rem;
-      border-radius: 8px;
-      background: linear-gradient(90deg, #0b1220, #0d1b2b);
-      cursor: pointer;
-      border: 1px solid #15303f;
-      text-align: center;
-      font-weight: 500;
-      transition: background 0.2s;
-    }
-    .new-chat:hover {
-      background: linear-gradient(90deg, #0d1b2b, #1e293b);
-    }
-    .nav {
-      margin-top: 0.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .nav button {
-      background: transparent;
-      color: #d7e8ff;
-      border: none;
-      padding: 0.75rem;
-      border-radius: 8px;
-      text-align: left;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: background 0.2s;
-    }
-    .nav button:hover {
-      background: #092432;
-    }
-    .footer {
-      margin-top: auto;
-      font-size: 0.75rem;
-      color: #9fb4d4;
-      text-align: center;
-    }
-
-    /* Chat area */
-    .chat-area {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.75rem 1rem;
-      background: linear-gradient(90deg, #071727, #08182a);
-      border-radius: 12px;
-    }
-    .topbar .title {
-      font-weight: 600;
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .topbar .title img {
-      width: 30px;
-      height: 30px;
-      border-radius: 6px;
-      object-fit: cover;
-    }
-
-    .messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1rem;
-      background: linear-gradient(180deg, #07192a, #071427);
-      border-radius: 12px;
-      scrollbar-width: thin;
-      scrollbar-color: #3b82f6 #07192a;
-    }
-    .messages::-webkit-scrollbar {
-      width: 6px;
-    }
-    .messages::-webkit-scrollbar-track {
-      background: #07192a;
-    }
-    .messages::-webkit-scrollbar-thumb {
-      background: #3b82f6;
-      border-radius: 3px;
-    }
-    .msg {
-      display: flex;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-    .msg.user {
-      justify-content: flex-end;
-    }
-    .bubble {
-      max-width: 75%;
-      padding: 0.75rem 1rem;
-      border-radius: 12px;
-      background: #08293a;
-      color: #e6eef8;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 0.95rem;
-    }
-    .bubble.user {
-      background: linear-gradient(90deg, #1e293b, #0b1220);
-      border: 1px solid #1e293b;
-    }
-
-    /* Code block styling */
-    .code-block {
-      position: relative;
-      background: #1e293b;
-      border-radius: 8px;
-      padding-top: 2rem;
-      margin-top: 0.5rem;
-    }
-    .copy-btn {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      padding: 0.3rem 0.6rem;
-      font-size: 0.75rem;
-      border: none;
-      border-radius: 4px;
-      background: #3b82f6;
-      color: white;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .copy-btn:hover {
-      background: #2563eb;
-    }
-
-    /* Composer */
-    .composer {
-      display: flex;
-      gap: 0.75rem;
-      padding: 0.75rem;
-      background: linear-gradient(90deg, #071728, #041021);
-      border-radius: 12px;
-    }
-    .composer input {
-      flex: 1;
-      padding: 0.75rem;
-      border-radius: 10px;
-      border: 1px solid #1e293b;
-      background: transparent;
-      color: #e6eef8;
-      font-size: 0.95rem;
-    }
-    .composer input::placeholder {
-      color: #9fb4d4;
-    }
-    .composer button {
-      padding: 0.75rem 1rem;
-      border-radius: 10px;
-      border: none;
-      background: linear-gradient(90deg, #06b6d4, #3b82f6);
-      color: #042f2e;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .composer button:hover {
-      background: linear-gradient(90deg, #0899b2, #2b6cbf);
-    }
-
-    /* Loader */
-    .typing {
-      width: 40px;
-      height: 10px;
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .typing span {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      background: #9bdaf7;
-      border-radius: 50%;
-      opacity: 0.25;
-      animation: blink 1s infinite;
-    }
-    .typing span:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-    .typing span:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-    @keyframes blink {
-      50% {
-        opacity: 1;
-      }
-    }
-
-    /* Feedback Section */
-    .feedback-section {
-      background: #071126;
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-top: 1.5rem;
-      color: #e6eef8;
-    }
-    .feedback-section h2 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
-    }
-    .feedback-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    .feedback-form input,
-    .feedback-form textarea {
-      padding: 0.75rem;
-      border-radius: 8px;
-      border: 1px solid #1e293b;
-      background: #0b1220;
-      color: #e6eef8;
-      font-size: 0.95rem;
-    }
-    .feedback-form input::placeholder,
-    .feedback-form textarea::placeholder {
-      color: #9fb4d4;
-    }
-    .feedback-form textarea {
-      resize: vertical;
-      min-height: 100px;
-    }
-    .feedback-form button {
-      padding: 0.75rem 1rem;
-      border-radius: 10px;
-      border: none;
-      background: linear-gradient(90deg, #06b6d4, #3b82f6);
-      color: #042f2e;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .feedback-form button:hover {
-      background: linear-gradient(90deg, #0899b2, #2b6cbf);
-    }
-
-    /* Responsive design */
-    @media (max-width: 1024px) {
-      .container {
-        grid-template-columns: 200px 1fr;
-        padding: 1rem;
-      }
-      .sidebar {
-        width: 200px;
-      }
-      .bubble {
-        max-width: 80%;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        grid-template-columns: 1fr;
-        padding: 0.5rem;
-      }
-      .sidebar {
-        display: none;
-      }
-      .topbar .title img {
-        width: 24px;
-        height: 24px;
-      }
-      .bubble {
-        max-width: 85%;
-      }
-      .composer {
-        flex-direction: column;
-      }
-      .composer input,
-      .composer button {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .topbar {
-        padding: 0.5rem;
-      }
-      .topbar .title {
-        font-size: 1rem;
-      }
-      .messages {
-        padding: 0.5rem;
-      }
-      .bubble {
-        max-width: 90%;
-        font-size: 0.9rem;
-      }
-      .composer {
-        padding: 0.5rem;
-      }
-    }
-  </style>
+  <link rel="icon" href="{{ url_for('static', filename='logo.png') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <div id="app" class="container">
-    <aside class="sidebar">
-      <div class="brand">
-        <img src="{{ url_for('static', filename='adibai.png') }}" alt="AdibAI Logo" class="logo">
-        <div>
-          <h1>AdibAI</h1>
-          <div style="font-size: 0.75rem; color: #9fb4d4">Your friendly AI assistant</div>
-        </div>
-      </div>
 
-      <div class="new-chat" onclick="clearChat()">+ New chat</div>
+<div class="page">
+  <header class="header">
+    <div class="logo">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Adib.AI">
+      <h2>Adib.AI</h2>
+    </div>
+    <div>
+      <button class="new-chat" onclick="clearChat()">New Chat</button>
+      <button class="feedback-btn" onclick="openFeedback()">Feedback</button>
+    </div>
+  </header>
 
-      <nav class="nav">
-        <button onclick="prefill('Write a haiku about AI')">Haiku example</button>
-        <button onclick="prefill('Give me a summary of the book Atomic Habits')">Summarize book</button>
-        <button onclick="prefill('Help me write a professional email for a job follow-up')">Email template</button>
-      </nav>
+  <!-- Chat messages -->
+  <div id="messages" class="messages"></div>
 
-      <div class="footer">AdibAI • Local dev</div>
-    </aside>
-
-    <main class="chat-area">
-      <div class="topbar">
-        <div class="title">
-           <img src="{{ url_for('static', filename='adibai.png') }}" alt="AdibAI Logo" class="logo">
-          AdibAI Chat
-        </div>
-      </div>
-
-      <div id="messages" class="messages"></div>
-
-      <div class="composer">
-        <input id="message" type="text" placeholder="Type a message... (Shift+Enter for newline)" onkeydown="handleKey(event)">
-        <button id="sendBtn" onclick="sendMessage()">Send</button>
-      </div>
-    </main>
+  <!-- Input box -->
+  <div class="input-container">
+    <div class="input-box">
+      <input type="text" id="user-input" placeholder="Ask me anything..." autofocus>
+      <button onclick="sendMessage()">Send</button>
+    </div>
   </div>
-  
-  <section class="feedback-section">
-    <h2>Give us your Feedback</h2>
-    <form id="feedback-form" class="feedback-form">
-      <input type="text" id="feedback-name" name="name" placeholder="Your Name" required>
-      <input type="email" id="feedback-email" name="email" placeholder="Your Email" required>
-      <textarea id="feedback-message" name="message" placeholder="Your Message" required></textarea>
+</div>
+
+<!-- Feedback Modal -->
+<div class="feedback-modal" id="feedbackModal">
+  <div class="feedback-card">
+    <h3>Help us get better</h3>
+    <form id="feedback-form">
+      <input type="text" id="fb-name" placeholder="Name (optional)">
+      <input type="email" id="fb-email" placeholder="Email" required>
+      <textarea id="fb-message" placeholder="Your feedback..." rows="3" required></textarea>
       <button type="submit">Send Feedback</button>
+      <button type="button" onclick="closeFeedback()" class="close-btn">Close</button>
+      <div id="fb-status"></div>
     </form>
-    <div id="feedback-status" style="margin-top: 1rem; text-align: center;"></div>
-  </section>
+  </div>
+</div>
 
-  <script>
-    const messagesEl = document.getElementById('messages');
-    const inputEl = document.getElementById('message');
-
-    function escapeHtml(str) {
-      return str.replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;");
-    }
-
-    function copyCode(btn) {
-      const codeEl = btn.parentElement.querySelector('pre code');
-      navigator.clipboard.writeText(codeEl.innerText).then(() => {
-        btn.textContent = "Copied!";
-        setTimeout(() => btn.textContent = "Copy", 1500);
-      });
-    }
-
-    function addMessage(text, who = 'bot') {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'msg ' + (who === 'user' ? 'user' : 'bot');
-
-      // Detect ``` code blocks
-      const codeRegex = /```(\w+)?\n([\s\S]*?)```/g;
-      let formatted = text.replace(codeRegex, (match, lang, code) => {
-        const language = lang || '';
-        return `
-<div class="code-block">
-  <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-  <pre><code class="${language}">${escapeHtml(code)}</code></pre>
-</div>`;
-      });
-
-      // Replace newlines with <br> for non-code
-      formatted = formatted.replace(/^(?!.*<pre>)(.+)$/gm, '$1<br>');
-
-      const bubble = document.createElement('div');
-      bubble.className = 'bubble ' + (who === 'user' ? 'user' : 'bot');
-      bubble.innerHTML = formatted;
-
-      wrapper.appendChild(bubble);
-      messagesEl.appendChild(wrapper);
-
-      hljs.highlightAll();
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-
-    function prefill(text) {
-      inputEl.value = text;
-      inputEl.focus();
-    }
-
-    function clearChat() {
-      messagesEl.innerHTML = '';
-    }
-
-    function handleKey(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    }
-
-    async function sendMessage() {
-      const text = inputEl.value.trim();
-      if (!text) return;
-      addMessage(text, 'user');
-      inputEl.value = '';
-
-      const typing = document.createElement('div');
-      typing.className = 'msg';
-      typing.innerHTML = '<div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
-      messagesEl.appendChild(typing);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-
-      try {
-        const res = await fetch('/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text })
-        });
-
-        const data = await res.json();
-        typing.remove();
-
-        if (data.reply) addMessage(data.reply, 'bot');
-        else addMessage('Error: ' + (data.error || 'Unknown error'), 'bot');
-      } catch (err) {
-        typing.remove();
-        addMessage('Network error: ' + err.message, 'bot');
-      }
-    }
-
-    // New JavaScript for the feedback form
-    document.getElementById('feedback-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const statusEl = document.getElementById('feedback-status');
-      statusEl.textContent = 'Sending...';
-
-      const name = document.getElementById('feedback-name').value;
-      const email = document.getElementById('feedback-email').value;
-      const message = document.getElementById('feedback-message').value;
-
-      try {
-        const res = await fetch('/feedback', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, message })
-        });
-
-        const data = await res.json();
-        if (data.success) {
-          statusEl.textContent = 'Feedback sent successfully! Thank you.';
-          document.getElementById('feedback-form').reset();
-        } else {
-          statusEl.textContent = 'Error: ' + data.error;
-        }
-      } catch (err) {
-        statusEl.textContent = 'Network error: ' + err.message;
-      }
-    });
-  </script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+function openFeedback() {
+  document.getElementById('feedbackModal').style.display = 'flex';
+}
+function closeFeedback() {
+  document.getElementById('feedbackModal').style.display = 'none';
+}
+</script>
 </body>
 </html>
