@@ -1,15 +1,8 @@
 import smtplib
 import os
 from email.message import EmailMessage
-from dotenv import load_dotenv
-from pathlib import Path
 
-# Load .env only if it exists (local development)
-dotenv_path = Path(__file__).parent / ".env"
-if dotenv_path.exists():
-    load_dotenv(dotenv_path=dotenv_path)
-
-# Environment variables
+# Read environment variables (works both locally and in live servers)
 YOUR_EMAIL = os.getenv("YOUR_EMAIL")
 YOUR_PASSWORD = os.getenv("YOUR_PASSWORD")
 TO_EMAIL = os.getenv("FEEDBACK_TO_EMAIL")
@@ -26,13 +19,10 @@ def send_feedback(name: str, email: str, message: str) -> bool:
     Returns:
         bool: True if email sent successfully, False otherwise
     """
-    # Debug logs (remove or comment in production)
-    print(f"DEBUG: YOUR_EMAIL={YOUR_EMAIL}")
-    print(f"DEBUG: TO_EMAIL={TO_EMAIL}")
 
     # Validate environment variables
     if not YOUR_EMAIL or not YOUR_PASSWORD or not TO_EMAIL:
-        print("Error: Missing required environment variables for email.")
+        print("Error: Missing environment variables for email.")
         return False
 
     try:
@@ -52,7 +42,7 @@ def send_feedback(name: str, email: str, message: str) -> bool:
         return True
 
     except smtplib.SMTPAuthenticationError:
-        print("Error: Authentication failed. Check your email or app password.")
+        print("Error: Authentication failed. Check your email credentials.")
         return False
     except Exception as e:
         print("Error sending feedback:", e)
